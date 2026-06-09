@@ -1,0 +1,104 @@
+Phân tích Input/Output các hàm
+Hàm display_patients(patient_list)
+
+Input:
+
+patient_list: list
+
+Output:
+
+None
+
+Chức năng:
+
+Nhận danh sách bệnh nhân.
+In toàn bộ danh sách ra màn hình.
+Nếu danh sách rỗng thì thông báo phù hợp.
+Hàm validate_gender(gender_input)
+
+Input:
+
+gender_input: str
+
+Output:
+
+bool
+
+Chức năng:
+
+Chuẩn hóa:
+gender_input.strip().lower()
+Nếu là:
+nam
+nu
+
+→ trả về True
+
+Ngược lại:
+
+False
+Hàm find_patient_index(patient_list, patient_id)
+
+Input:
+
+patient_list: list
+patient_id: str
+
+Output:
+
+int
+
+Chức năng:
+
+Tìm bệnh nhân theo mã.
+Trả về vị trí index.
+Không tìm thấy trả về:
+-1
+Hàm add_patient(patient_list)
+
+Input:
+
+patient_list: list
+
+Output:
+
+None
+
+Chức năng:
+
+Nhập dữ liệu bệnh nhân.
+Kiểm tra hợp lệ.
+Chuẩn hóa dữ liệu.
+Thêm bệnh nhân vào danh sách bằng .append().
+Hàm update_diagnosis(patient_list)
+
+Input:
+
+patient_list: list
+
+Output:
+
+None
+
+Chức năng:
+
+Tìm bệnh nhân theo mã.
+Cập nhật chẩn đoán tại:
+patient[index][3]
+Hàm search_by_disease(patient_list)
+
+Input:
+
+patient_list: list
+
+Output:
+
+None
+
+Chức năng:
+
+Tìm kiếm theo từ khóa bệnh.
+Không phân biệt hoa thường.
+Thống kê số lượng bệnh nhân phù hợp.
+
+
