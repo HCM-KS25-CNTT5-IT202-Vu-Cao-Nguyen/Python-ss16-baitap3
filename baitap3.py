@@ -1,248 +1,181 @@
-from datetime import datetime
+# =============================================================
+#  HỆ THỐNG QUẢN LÝ BỆNH NHÂN NỘI TRÚ RIKKEI HOSPITAL
+# =============================================================
 
-patient_records = [
-    "BN001-Nguyen Van A-1985-Viem Phoi",
-    "BN002-Tran Thi B-1990-Sot Xuat Huyet",
-    "BN003-Le Van C-2015-Viem Phe Quan"
+# Danh sách bệnh nhân ban đầu (List of Lists)
+patients = [
+    ["BN001", "Nguyen Van A", "Nam", "Viem Phoi"],
+    ["BN002", "Tran Thi B",  "Nu",  "Sot Xuat Huyet"]
 ]
 
 
-def find_patient_index(records, patient_id):
-    """
-    Tìm vị trí bệnh nhân theo mã bệnh nhân.
+# -------------------------------------------------------------
+# HELPER FUNCTIONS
+# -------------------------------------------------------------
 
-    Parameters:
-        records (list): Danh sách hồ sơ bệnh án.
-        patient_id (str): Mã bệnh nhân cần tìm.
+def validate_gender(gender_input):
+    """Kiểm tra giới tính hợp lệ. Trả về True nếu là 'nam' hoặc 'nu'."""
+    return gender_input.strip().lower() in ["nam", "nu"]
 
-    Returns:
-        int:
-            Index của bệnh nhân nếu tìm thấy.
-            -1 nếu không tìm thấy.
-    """
+
+def find_patient_index(patient_list, patient_id):
+    """Tìm index của bệnh nhân theo mã BN. Trả về index hoặc -1 nếu không thấy."""
     patient_id = patient_id.strip().upper()
-
-    for index, record in enumerate(records):
-        if record.startswith(patient_id):
-            return index
-
+    for i in range(len(patient_list)):
+        if patient_list[i][0] == patient_id:
+            return i
     return -1
 
 
-def display_records(records):
-    """
-    Hiển thị danh sách hồ sơ bệnh án.
+# -------------------------------------------------------------
+# CHỨC NĂNG 1: HIỂN THỊ DANH SÁCH BỆNH NHÂN
+# -------------------------------------------------------------
 
-    Parameters:
-        records (list): Danh sách hồ sơ bệnh án.
+def display_patients(patient_list):
+    """In ra toàn bộ danh sách bệnh nhân đang điều trị."""
+    print("----- DANH SÁCH BỆNH NHÂN ĐANG ĐIỀU TRỊ -----")
+    if len(patient_list) == 0:
+        print("Hiện không có bệnh nhân nào đang điều trị.")
+        return
+    for i in range(len(patient_list)):
+        p = patient_list[i]
+        print(f"{i + 1}. Mã: {p[0]} | Tên: {p[1]} | Giới tính: {p[2]} | Bệnh: {p[3]}")
 
-    Returns:
-        None
-    """
-    if len(records) == 0:
-        print("Hệ thống hiện chưa có hồ sơ nào.")
+
+# -------------------------------------------------------------
+# CHỨC NĂNG 2: TIẾP NHẬN BỆNH NHÂN MỚI
+# -------------------------------------------------------------
+
+def add_patient(patient_list):
+    """Tiếp nhận bệnh nhân mới, chuẩn hóa dữ liệu và thêm vào danh sách."""
+    print("----- TIẾP NHẬN BỆNH NHÂN MỚI -----")
+
+    # Nhập và kiểm tra mã bệnh nhân
+    ma_bn = input("Nhập mã bệnh nhân: ").strip().upper()
+    if len(ma_bn) == 0:
+        print("Mã bệnh nhân không được để trống!")
+        return
+    if find_patient_index(patient_list, ma_bn) != -1:
+        print("Mã bệnh nhân đã tồn tại trong hệ thống, vui lòng kiểm tra lại!")
         return
 
-    print("\n--- DANH SÁCH BỆNH NHÂN ----------------------------------------------")
-
-    for index, record in enumerate(records, start=1):
-        patient_id, name, birth_year, diagnosis = record.split("-")
-
-        print(
-            f"{index}. [{patient_id}] "
-            f"{name:<20} | "
-            f"Năm sinh: {birth_year} | "
-            f"Chẩn đoán: {diagnosis}"
-        )
-
-    print("---------------------------------------------------------------------")
-
-
-def add_patient(records):
-    """
-    Thêm hồ sơ bệnh nhân mới.
-
-    Parameters:
-        records (list): Danh sách hồ sơ bệnh án.
-
-    Returns:
-        None
-    """
-    print("\n--- THÊM HỒ SƠ BỆNH NHÂN MỚI ---")
-
-    patient_id = input("Nhập mã bệnh nhân: ").strip().upper()
-
-    if find_patient_index(records, patient_id) != -1:
-        print("\nMã bệnh nhân đã tồn tại!")
+    # Nhập và kiểm tra tên bệnh nhân
+    ten_bn = input("Nhập tên bệnh nhân: ").strip().title()
+    if len(ten_bn) == 0:
+        print("Tên bệnh nhân không được để trống!")
         return
 
-    name = input("Nhập tên bệnh nhân: ")
-    name = name.replace("-", " ").strip().title()
-
-    current_year = datetime.now().year
-
+    # Nhập và kiểm tra giới tính (vòng lặp đến khi hợp lệ)
     while True:
-        birth_year = input("Nhập năm sinh: ").strip()
-
-        if (
-            birth_year.isdigit()
-            and 1900 <= int(birth_year) <= current_year
-        ):
+        gioi_tinh = input("Nhập giới tính Nam/Nu: ")
+        if validate_gender(gioi_tinh):
+            gioi_tinh = gioi_tinh.strip().title()
             break
+        print("Giới tính không hợp lệ, vui lòng nhập lại!")
 
-        print("Năm sinh không hợp lệ, vui lòng nhập lại!")
-
-    diagnosis = input("Nhập chẩn đoán: ")
-    diagnosis = diagnosis.replace("-", " ").strip().capitalize()
-
-    record = "-".join([
-        patient_id,
-        name,
-        birth_year,
-        diagnosis
-    ])
-
-    records.append(record)
-
-    print("\nThêm hồ sơ bệnh nhân thành công!")
-    print("Dữ liệu được lưu:")
-    print(record)
-
-
-def update_diagnosis(records):
-    """
-    Cập nhật chẩn đoán theo mã bệnh nhân.
-
-    Parameters:
-        records (list): Danh sách hồ sơ bệnh án.
-
-    Returns:
-        None
-    """
-    print("\n--- CẬP NHẬT CHẨN ĐOÁN THEO MÃ BN ---")
-
-    patient_id = input(
-        "Nhập mã bệnh nhân cần cập nhật: "
-    ).strip().upper()
-
-    index = find_patient_index(records, patient_id)
-
-    if index == -1:
-        print(f"\nKhông tìm thấy bệnh nhân mang mã {patient_id}!")
+    # Nhập và kiểm tra chẩn đoán bệnh
+    chan_doan = input("Nhập chẩn đoán bệnh: ").strip().capitalize()
+    if len(chan_doan) == 0:
+        print("Chẩn đoán bệnh không được để trống!")
         return
 
-    patient_data = records[index].split("-")
-
-    print(f"\nTìm thấy bệnh nhân: {patient_data[1]}")
-    print(f"Chẩn đoán hiện tại: {patient_data[3]}")
-
-    new_diagnosis = input(
-        "Nhập chẩn đoán mới: "
-    )
-
-    new_diagnosis = (
-        new_diagnosis.replace("-", " ")
-        .strip()
-        .capitalize()
-    )
-
-    patient_data[3] = new_diagnosis
-
-    records[index] = "-".join(patient_data)
-
-    print("\nCập nhật chẩn đoán thành công!")
-    print("Dữ liệu mới được lưu:")
-    print(records[index])
+    # Gói thành list con và thêm vào danh sách
+    patient_list.append([ma_bn, ten_bn, gioi_tinh, chan_doan])
+    print("Tiếp nhận bệnh nhân thành công!")
 
 
-def generate_age_report(records):
-    """
-    Báo cáo phân loại bệnh nhân theo độ tuổi.
+# -------------------------------------------------------------
+# CHỨC NĂNG 3: CẬP NHẬT CHẨN ĐOÁN BỆNH
+# -------------------------------------------------------------
 
-    Parameters:
-        records (list): Danh sách hồ sơ bệnh án.
+def update_diagnosis(patient_list):
+    """Cập nhật chẩn đoán bệnh của bệnh nhân theo mã BN."""
+    print("----- CẬP NHẬT CHẨN ĐOÁN BỆNH -----")
 
-    Returns:
-        None
-    """
-    current_year = datetime.now().year
+    # Nhập và kiểm tra mã bệnh nhân
+    ma_bn = input("Nhập mã bệnh nhân cần cập nhật: ").strip().upper()
+    if len(ma_bn) == 0:
+        print("Mã bệnh nhân không được để trống!")
+        return
 
-    children = 0
-    adults = 0
-    seniors = 0
+    # Tìm bệnh nhân trong danh sách
+    index = find_patient_index(patient_list, ma_bn)
+    if index == -1:
+        print(f"Không tìm thấy hồ sơ mang mã {ma_bn}!")
+        return
 
-    for record in records:
-        birth_year = int(record.split("-")[2])
+    # Hiển thị thông tin hiện tại
+    print(f"Tìm thấy bệnh nhân: {patient_list[index][1]}")
+    print(f"Chẩn đoán hiện tại: {patient_list[index][3]}")
 
-        age = current_year - birth_year
+    # Nhập và kiểm tra chẩn đoán mới
+    chan_doan_moi = input("Nhập chẩn đoán mới: ").strip().capitalize()
+    if len(chan_doan_moi) == 0:
+        print("Chẩn đoán bệnh không được để trống!")
+        return
 
-        if age < 16:
-            children += 1
-        elif age <= 60:
-            adults += 1
-        else:
-            seniors += 1
-
-    print("\n--- BÁO CÁO PHÂN LOẠI THEO ĐỘ TUỔI ---")
-    print(f"Trẻ em: {children} bệnh nhân")
-    print(f"Trưởng thành: {adults} bệnh nhân")
-    print(f"Người cao tuổi: {seniors} bệnh nhân")
-    print("--------------------------------------")
+    # Cập nhật vào đúng vị trí index 3 của list con
+    patient_list[index][3] = chan_doan_moi
+    print("Cập nhật chẩn đoán bệnh thành công!")
 
 
-def display_menu():
-    """
-    Hiển thị menu chức năng của hệ thống.
+# -------------------------------------------------------------
+# CHỨC NĂNG 4: TÌM KIẾM VÀ THỐNG KÊ THEO TÊN BỆNH
+# -------------------------------------------------------------
 
-    Returns:
-        None
-    """
-    print("\n===== HỆ THỐNG QUẢN LÝ BỆNH ÁN RIKKEI HOSPITAL =====")
-    print("1. Xem danh sách hồ sơ bệnh án")
-    print("2. Thêm hồ sơ bệnh nhân mới")
-    print("3. Cập nhật chẩn đoán theo Mã BN")
-    print("4. Báo cáo phân loại theo độ tuổi")
+def search_by_disease(patient_list):
+    """Tìm kiếm bệnh nhân theo từ khóa tên bệnh, không phân biệt hoa/thường."""
+    print("----- TÌM KIẾM BỆNH NHÂN THEO TÊN BỆNH -----")
+
+    # Nhập và kiểm tra từ khóa
+    keyword = input("Nhập từ khóa tên bệnh: ").strip()
+    if len(keyword) == 0:
+        print("Từ khóa tìm kiếm không được để trống!")
+        return
+
+    # Duyệt danh sách, tìm theo từ khóa không phân biệt hoa/thường
+    results = []
+    for p in patient_list:
+        if keyword.lower() in p[3].lower():
+            results.append(p)
+
+    # In kết quả
+    print("Kết quả tìm kiếm:")
+    if len(results) == 0:
+        print("Không tìm thấy bệnh nhân nào phù hợp.")
+    else:
+        for i in range(len(results)):
+            p = results[i]
+            print(f"{i + 1}. Mã: {p[0]} | Tên: {p[1]} | Giới tính: {p[2]} | Bệnh: {p[3]}")
+
+    print(f"Có tổng cộng {len(results)} bệnh nhân mắc bệnh liên quan đến '{keyword}'.")
+
+
+# -------------------------------------------------------------
+# MAIN FLOW — VÒNG LẶP CHÍNH
+# -------------------------------------------------------------
+
+while True:
+    print("\n===== HỆ THỐNG QUẢN LÝ BỆNH NHÂN RIKKEI =====")
+    print("1. Hiển thị danh sách bệnh nhân")
+    print("2. Tiếp nhận bệnh nhân mới")
+    print("3. Cập nhật chẩn đoán bệnh theo mã BN")
+    print("4. Tìm kiếm và thống kê theo tên bệnh")
     print("5. Thoát chương trình")
-    print("==================================================")
+    print("===========================================")
 
+    lua_chon = input("Nhập lựa chọn của bạn: ").strip()
 
-def main():
-    """
-    Hàm điều khiển chương trình chính.
-
-    Returns:
-        None
-    """
-    while True:
-        display_menu()
-
-        try:
-            choice = int(
-                input("Chọn chức năng (1-5): ").strip()
-            )
-
-            match choice:
-                case 1:
-                    display_records(patient_records)
-
-                case 2:
-                    add_patient(patient_records)
-
-                case 3:
-                    update_diagnosis(patient_records)
-
-                case 4:
-                    generate_age_report(patient_records)
-
-                case 5:
-                    print("Cảm ơn bác sĩ đã sử dụng hệ thống!")
-                    break
-
-                case _:
-                    print("Lựa chọn không hợp lệ!")
-
-        except ValueError:
-            print("Lựa chọn không hợp lệ!")
-
-
-main()
+    if lua_chon == "1":
+        display_patients(patients)
+    elif lua_chon == "2":
+        add_patient(patients)
+    elif lua_chon == "3":
+        update_diagnosis(patients)
+    elif lua_chon == "4":
+        search_by_disease(patients)
+    elif lua_chon == "5":
+        print("Cảm ơn bác sĩ đã sử dụng hệ thống!")
+        break
+    else:
+        print("Lựa chọn không hợp lệ, vui lòng nhập số từ 1-5!")
